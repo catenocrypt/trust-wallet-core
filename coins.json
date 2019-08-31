@@ -1065,5 +1065,24 @@
             "clientPublic": "",
             "clientDocs": "https://fio.foundation"
         }
+    },
+    {
+        "id": "mikron",
+        "name": "Mikron",
+        "symbol": "MIK",
+        "decimals": 10,
+        "blockchain": "Mikron",
+        "derivationPath": "m/44'/1165'/0'",
+        "curve": "ed25519Blake2bNano",
+        "publicKeyType": "ed25519Blake2b",
+        "explorer": "https://mikron.io/en/mikron-explorer",
+        "url": "https://mikron.io",
+        "rpcNodeInfo": "https://github.com/mikroncoin/mikron_node",
+        "info": {
+            "url": "https://mikron.io",
+            "client": "https://github.com/mikroncoin/mikron_node",
+            "clientPublic": "",
+            "clientDocs": ""
+        }
     }
 ]

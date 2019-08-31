@@ -166,6 +166,10 @@ bool TW::validateAddress(TWCoinType coin, const std::string& string) {
         
     case TWCoinTypeNebulas:
         return Nebulas::Address::isValid(string);
+
+    case TWCoinTypeMikron:
+        // TODO Mikron
+        return Nano::Address::isValid(string);
     }
 }
 
@@ -296,6 +300,10 @@ std::string TW::deriveAddress(TWCoinType coin, const PublicKey& publicKey) {
         
     case TWCoinTypeNebulas:
         return Nebulas::Address(publicKey).string();
+
+    case TWCoinTypeMikron:
+        // TODO Mikron
+        return Nano::Address(publicKey).string();
     }
 }
 
