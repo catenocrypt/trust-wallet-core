@@ -31,14 +31,14 @@ TEST(MikAddress, FromString) {
         string mikAddress = "mik_3a5m9194xbznhx7nkoc1qsq8ip17dcuyyinzsxmgkeu7o5syqbzhcb7uur1h";
         const auto address = Address(mikAddress);
         ASSERT_EQ(address.string(), mikAddress);
-        ASSERT_EQ(hex(address.bytes), "a073380e2ea7f47f4b495540be6e6858055ab7ef429fcf66e93365a8f3eba7ef");
+        ASSERT_EQ(hex(address.data()), "a073380e2ea7f47f4b495540be6e6858055ab7ef429fcf66e93365a8f3eba7ef");
     }
 
     {
         string addressStr = "mik_1111111111111111111111111111111111111111111111111111hifc8npp";
         const auto address = Address(addressStr);
         ASSERT_EQ(address.string(), addressStr);
-        ASSERT_EQ(hex(address.bytes), "0000000000000000000000000000000000000000000000000000000000000000");
+        ASSERT_EQ(hex(address.data()), "0000000000000000000000000000000000000000000000000000000000000000");
     }
 }
 

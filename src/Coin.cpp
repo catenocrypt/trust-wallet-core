@@ -16,6 +16,7 @@
 #include "Groestlcoin/Address.h"
 #include "IOST/Account.h"
 #include "Icon/Address.h"
+#include "Mikron/Address.h"
 #include "Nano/Address.h"
 #include "NEO/Address.h"
 #include "Nimiq/Address.h"
@@ -168,8 +169,7 @@ bool TW::validateAddress(TWCoinType coin, const std::string& string) {
         return Nebulas::Address::isValid(string);
 
     case TWCoinTypeMikron:
-        // TODO Mikron
-        return Nano::Address::isValid(string);
+        return Mikron::Address::isValid(string);
     }
 }
 
@@ -302,8 +302,7 @@ std::string TW::deriveAddress(TWCoinType coin, const PublicKey& publicKey) {
         return Nebulas::Address(publicKey).string();
 
     case TWCoinTypeMikron:
-        // TODO Mikron
-        return Nano::Address(publicKey).string();
+        return Mikron::Address(publicKey).string();
     }
 }
 

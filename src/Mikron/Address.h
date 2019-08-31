@@ -14,9 +14,6 @@ namespace TW::Mikron {
 
 class Address {
 public:
-    /// Address data, 32 bytes
-    std::array<byte, 32> bytes;
-
     /// Determines whether a string makes a valid address.
     static bool isValid(const std::string& string);
 
@@ -28,6 +25,13 @@ public:
 
     /// Returns a string representation of the address.
     std::string string() const;
+
+    /// Returns the internal binary representation
+    inline const std::array<byte, 32> data() const { return bytes; }
+
+private:
+    /// Address data, 32 bytes
+    std::array<byte, 32> bytes;
 };
 
 } // namespace TW::Mikron
