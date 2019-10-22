@@ -14,31 +14,31 @@ TW_EXTERN_C_BEGIN
 
 struct TWPublicKey;
 
-/// Represents a Telegram address.
+/// Represents a TON address.
 TW_EXPORT_CLASS
-struct TWTelegramAddress;
+struct TWTONAddress;
 
 /// Compares two addresses for equality.
 TW_EXPORT_STATIC_METHOD
-bool TWTelegramAddressEqual(struct TWTelegramAddress *_Nonnull lhs, struct TWTelegramAddress *_Nonnull rhs);
+bool TWTONAddressEqual(struct TWTONAddress *_Nonnull lhs, struct TWTONAddress *_Nonnull rhs);
 
 /// Determines if the string is a valid address.
 TW_EXPORT_STATIC_METHOD
-bool TWTelegramAddressIsValidString(TWString *_Nonnull string);
+bool TWTONAddressIsValidString(TWString *_Nonnull string);
 
 /// Creates an address from a string representaion.
 TW_EXPORT_STATIC_METHOD
-struct TWTelegramAddress *_Nullable TWTelegramAddressCreateWithString(TWString *_Nonnull string);
+struct TWTONAddress *_Nullable TWTONAddressCreateWithString(TWString *_Nonnull string);
 
 /// Creates an address from a public key.
 TW_EXPORT_STATIC_METHOD
-struct TWTelegramAddress *_Nonnull TWTelegramAddressCreateWithPublicKey(struct TWPublicKey *_Nonnull publicKey);
+struct TWTONAddress *_Nonnull TWTONAddressCreateWithPublicKey(struct TWPublicKey *_Nonnull publicKey);
 
 TW_EXPORT_METHOD
-void TWTelegramAddressDelete(struct TWTelegramAddress *_Nonnull address);
+void TWTONAddressDelete(struct TWTONAddress *_Nonnull address);
 
 /// Returns the address string representation.
 TW_EXPORT_PROPERTY
-TWString *_Nonnull TWTelegramAddressDescription(struct TWTelegramAddress *_Nonnull address);
+TWString *_Nonnull TWTONAddressDescription(struct TWTONAddress *_Nonnull address);
 
 TW_EXTERN_C_END

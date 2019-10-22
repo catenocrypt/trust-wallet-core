@@ -10,46 +10,46 @@
 
 #include <memory>
 
-namespace TW::Telegram {
+namespace TW::TON {
 
 /**
- * Simplified implementation of TON Slice, Cell, etc. structures, for minimal represenatation and hash computation.
- * 
+ * Simplified implementation of TON Slice, Cell, etc. structures, for minimal represenatation and
+ * hash computation.
+ *
  * TODO: Slice load methods into constructor or static create methods
  */
 
 /**
  * Represents a Slice.
  * Sample usage, bytes:
- *   Slice s1 = Slice::createFromBytesStr("123456")); // or createFromBytes(parse_hex("123456"));
- *   std::cout << "slice, size: " << s1.size() << " data: " << s1.asBytesStr() << " hash: " << TW::hex(s1.hash()) << std::endl;
- * Outputs:
- *   slice, size: 3 data: 123456 hash: bf7cbe09d71a1bcc373ab9a764917f730a6ed951ffa1a7399b7abd8f8fd73cb4
+ *   Slice s1 = Slice::createFromHex("123456")); // or createFromData(parse_hex("123456"));
+ *   std::cout << "slice, size: " << s1.size() << " data: " << s1.asBytesStr() << " hash: " <<
+ * TW::hex(s1.hash()) << std::endl; Outputs: slice, size: 3 data: 123456 hash:
+ * bf7cbe09d71a1bcc373ab9a764917f730a6ed951ffa1a7399b7abd8f8fd73cb4
  */
-class Slice
-{
-public:
+class Slice {
+  public:
     Slice();
     virtual ~Slice();
-    Slice & operator=(const Slice & from);
+    Slice &operator=(const Slice &from);
     /// Constructor methods.  May throw.
-    static Slice createFromBytes(unsigned char* data, size_t size);
-    static Slice createFromBytes(TW::Data data);
-    static Slice createFromBytesStr(std::string const & dataStr);
-    static Slice createFromBits(unsigned char* data, size_t size, size_t sizeBits);
+    static Slice createFromData(uint8_t *data, size_t size);
+    static Slice createFromData(TW::Data data);
+    static Slice createFromHex(std::string const &dataStr);
+    static Slice createFromBits(uint8_t *data, size_t size, size_t sizeBits);
     static Slice createFromBits(TW::Data data, size_t sizeBits);
-    static Slice createFromBitsStr(std::string const & dataStr, size_t sizeBits);
-    unsigned char* data() const { return _data; }
+    static Slice createFromBitsStr(std::string const &dataStr, size_t sizeBits);
+    uint8_t *data() const { return _data; }
     size_t size() const { return _size; }
     size_t sizeBits() const { return _sizeBits; }
     std::string asBytesStr() const;
     TW::Data hash() const;
 
-private:
-    void allocate(size_t size, unsigned char* data);
+  private:
+    void allocate(size_t size, uint8_t *data);
 
-private:
-    unsigned char* _data;
+  private:
+    uint8_t *_data;
     size_t _size; // in bytes
     size_t _sizeBits;
 };
@@ -120,31 +120,30 @@ private:
  *    x{00000000F61CF0BC8E891AD7636E0CD35229D579323AA2DA827EB85D8071407464DC2FA3}
  *   Data hash: 60c04141c6a7b96d68615e7a91d265ad0f3a9a922e9ae9c901d4fa83f5d3c0d0
  */
-class Cell
-{
-public:
+class Cell {
+  public:
     Cell() {}
-    void setSlice(Slice const & slice);
+    void setSlice(Slice const &slice);
     /// Convenience method for setting slice directly from bytes.  May throw.
-    void setSliceBytes(unsigned char* data, size_t size);
+    void setSliceBytes(uint8_t *data, size_t size);
     /// Convenience method for setting slice directly from bytes.  May throw.
-    void setSliceBytesStr(std::string const & sliceStr);
+    void setSliceBytesStr(std::string const &sliceStr);
     /// Convenience method for setting slice directly from bits.  May throw.
-    void setSliceBitsStr(std::string const & sliceStr, size_t sizeBits);
-    void addCell(std::shared_ptr<Cell> const & cell);
+    void setSliceBitsStr(std::string const &sliceStr, size_t sizeBits);
+    void addCell(std::shared_ptr<Cell> const &cell);
     size_t cell_count() const { return _cells.size(); }
-    Slice const & getSlice() const { return _slice; }
+    Slice const &getSlice() const { return _slice; }
     std::string toString() const;
     TW::Data hash() const;
     static const size_t max_cells = 4;
 
-private:
+  private:
     /// Internal, second byte in hash
     static size_t d2(size_t bits);
 
-private:
+  private:
     std::vector<std::shared_ptr<Cell>> _cells;
     Slice _slice;
 };
 
-} // namespace
+} // namespace TW::TON

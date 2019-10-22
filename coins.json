@@ -1103,10 +1103,10 @@
     },
     {
         "id": "ton",
-        "name": "Telegram",
+        "name": "TON",
         "symbol": "TON",
         "decimals": 9,
-        "blockchain": "Telegram",
+        "blockchain": "TON",
         "derivationPath": "m/44'/396'/0'",
         "curve": "ed25519",
         "publicKeyType": "ed25519",

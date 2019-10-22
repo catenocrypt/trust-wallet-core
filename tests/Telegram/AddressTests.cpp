@@ -4,21 +4,21 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
-#include "Telegram/Address.h"
+#include "TON/Address.h"
 #include "HexCoding.h"
 
 #include <gtest/gtest.h>
 
 using namespace std;
 using namespace TW;
-using namespace TW::Telegram;
+using namespace TW::TON;
 
 static string TestGiverHex = "8156775b79325e5d62e742d9b96c30b6515a5cd2f1f64c5da4b193c03f070e0d";
 static string TestGiverRaw = "-1:8156775b79325e5d62e742d9b96c30b6515a5cd2f1f64c5da4b193c03f070e0d";
 static string TestGiverUser = "Ef+BVndbeTJeXWLnQtm5bDC2UVpc0vH2TF2ksZPAPwcODSkb";
 static string TestGiverUserUrl = "Ef-BVndbeTJeXWLnQtm5bDC2UVpc0vH2TF2ksZPAPwcODSkb"; // base64url
 
-TEST(TelegramAddress, WorkchainValid)
+TEST(TONAddress, WorkchainValid)
 {
     ASSERT_TRUE(Workchain::isValid(0));
     ASSERT_TRUE(Workchain::isValid(-1));
@@ -26,7 +26,7 @@ TEST(TelegramAddress, WorkchainValid)
     ASSERT_FALSE(Workchain::isValid(10));
 }
 
-TEST(TelegramAddress, AddressValidUser)
+TEST(TONAddress, AddressValidUser)
 {
     ASSERT_TRUE(Address::isValid(TestGiverUser));
     // wrong length
@@ -38,7 +38,7 @@ TEST(TelegramAddress, AddressValidUser)
     ASSERT_FALSE(Address::isValid("Ef+BVndbeTJeXWLnQtm5bDC2UVpc0vH2TF2ksZPAPwcODQAA"));
 }
 
-TEST(TelegramAddress, AddressValidRaw)
+TEST(TONAddress, AddressValidRaw)
 {
     ASSERT_TRUE(Address::isValid(TestGiverRaw));
     ASSERT_TRUE(Address::isValid("0:8156775b79325e5d62e742d9b96c30b6515a5cd2f1f64c5da4b193c03f070e0d"));
@@ -56,7 +56,7 @@ TEST(TelegramAddress, AddressValidRaw)
     ASSERT_FALSE(Address::isValid(""));
 }
 
-TEST(TelegramAddress, AddressFromUser)
+TEST(TONAddress, AddressFromUser)
 {
     {
         auto addr = Address(TestGiverUser);
@@ -79,7 +79,7 @@ TEST(TelegramAddress, AddressFromUser)
     }
 }
 
-TEST(TelegramAddress, AddressFromRaw)
+TEST(TONAddress, AddressFromRaw)
 {
     auto addr = Address(TestGiverRaw);
     // convert back to string, check
@@ -89,7 +89,7 @@ TEST(TelegramAddress, AddressFromRaw)
     ASSERT_EQ(TestGiverRaw, addr2strRaw);
 }
 
-TEST(TelegramAddress, AddressToString)
+TEST(TONAddress, AddressToString)
 {
     auto addr = Address(TestGiverUser);
 
@@ -100,7 +100,7 @@ TEST(TelegramAddress, AddressToString)
     ASSERT_EQ(TestGiverRaw, strUserRaw);
 }
 
-TEST(TelegramAddress, AddressFromPublicKey)
+TEST(TONAddress, AddressFromPublicKey)
 {
     // Sample taken from TON HOWTO
     const auto publicKey = PublicKey(parse_hex("F61CF0BC8E891AD7636E0CD35229D579323AA2DA827EB85D8071407464DC2FA3"), TWPublicKeyTypeED25519);

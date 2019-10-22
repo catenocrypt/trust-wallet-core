@@ -4,48 +4,48 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
-#include "../Telegram/Address.h"
+#include "../TON/Address.h"
 
 #include <TrustWalletCore/TWPublicKey.h>
-#include <TrustWalletCore/TWTelegramAddress.h>
+#include <TrustWalletCore/TWTONAddress.h>
 
 using namespace TW;
-using namespace TW::Telegram;
+using namespace TW::TON;
 
-bool TWTelegramAddressEqual(struct TWTelegramAddress *_Nonnull lhs,
-                          struct TWTelegramAddress *_Nonnull rhs)
+bool TWTONAddressEqual(struct TWTONAddress *_Nonnull lhs,
+                          struct TWTONAddress *_Nonnull rhs)
 {
     return lhs->impl == rhs->impl;
 }
 
-bool TWTelegramAddressIsValidString(TWString *_Nonnull string)
+bool TWTONAddressIsValidString(TWString *_Nonnull string)
 {
     auto s = reinterpret_cast<const std::string *>(string);
     return Address::isValid(*s);
 }
 
-struct TWTelegramAddress *_Nullable TWTelegramAddressCreateWithString(TWString *_Nonnull string)
+struct TWTONAddress *_Nullable TWTONAddressCreateWithString(TWString *_Nonnull string)
 {
     auto s = reinterpret_cast<const std::string *>(string);
     try {
         const auto address = Address(*s);
-        return new TWTelegramAddress{std::move(address)};
+        return new TWTONAddress{std::move(address)};
     } catch (...) {
         return nullptr;
     }
 }
 
-struct TWTelegramAddress *_Nonnull TWTelegramAddressCreateWithPublicKey(
+struct TWTONAddress *_Nonnull TWTONAddressCreateWithPublicKey(
     struct TWPublicKey *_Nonnull publicKey) {
-    return new TWTelegramAddress{Address(publicKey->impl)};
+    return new TWTONAddress{Address(publicKey->impl)};
 }
 
-void TWTelegramAddressDelete(struct TWTelegramAddress *_Nonnull address)
+void TWTONAddressDelete(struct TWTONAddress *_Nonnull address)
 {
     delete address;
 }
 
-TWString *_Nonnull TWTelegramAddressDescription(struct TWTelegramAddress *_Nonnull address)
+TWString *_Nonnull TWTONAddressDescription(struct TWTONAddress *_Nonnull address)
 {
     const auto string = address->impl.string();
     return TWStringCreateWithUTF8Bytes(string.c_str());

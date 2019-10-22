@@ -4,7 +4,7 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
-#include <TrustWalletCore/TWTelegramAddress.h>
+#include <TrustWalletCore/TWTONAddress.h>
 #include <TrustWalletCore/TWString.h>
 #include <TrustWalletCore/TWPublicKey.h>
 #include <TrustWalletCore/TWHDWallet.h>
@@ -13,40 +13,40 @@
 
 #include <gtest/gtest.h>
 
-TEST(TWTelegramAddress, CreateWithString) {
+TEST(TWTONAddress, CreateWithString) {
     auto addrStr = TWStringCreateWithUTF8Bytes("Ef+BVndbeTJeXWLnQtm5bDC2UVpc0vH2TF2ksZPAPwcODSkb");
 
     // first call isValid
-    bool isValid = TWTelegramAddressIsValidString(addrStr);
+    bool isValid = TWTONAddressIsValidString(addrStr);
     ASSERT_TRUE(isValid);
 
     // create address
-    auto address = TWTelegramAddressCreateWithString(addrStr);
+    auto address = TWTONAddressCreateWithString(addrStr);
     // convert back to string
-    auto str2 = TWTelegramAddressDescription(address);
+    auto str2 = TWTONAddressDescription(address);
     ASSERT_EQ(std::string(TWStringUTF8Bytes(addrStr)), std::string(TWStringUTF8Bytes(str2)));
 
     {
         // create a second one, also invoke compare
-        auto address2 = TWTelegramAddressCreateWithString(TWStringCreateWithUTF8Bytes("Ef-BVndbeTJeXWLnQtm5bDC2UVpc0vH2TF2ksZPAPwcODSkb"));
-        ASSERT_TRUE(TWTelegramAddressEqual(address, address2));
+        auto address2 = TWTONAddressCreateWithString(TWStringCreateWithUTF8Bytes("Ef-BVndbeTJeXWLnQtm5bDC2UVpc0vH2TF2ksZPAPwcODSkb"));
+        ASSERT_TRUE(TWTONAddressEqual(address, address2));
 
-        TWTelegramAddressDelete(address2);
+        TWTONAddressDelete(address2);
     }
 
-    TWTelegramAddressDelete(address);
+    TWTONAddressDelete(address);
 }
 
-TEST(TWTelegramAddress, CreateWithPublicKey) {
+TEST(TWTONAddress, CreateWithPublicKey) {
     auto pkData = DATA("F61CF0BC8E891AD7636E0CD35229D579323AA2DA827EB85D8071407464DC2FA3");
     //auto publicKey = WRAP(TWPublicKey, TWPublicKeyCreateWithData(pkData.get(), TWPublicKeyTypeED25519));
     auto publicKey = TWPublicKeyCreateWithData(pkData.get(), TWPublicKeyTypeED25519);
-    auto address = TWTelegramAddressCreateWithPublicKey(publicKey);
-    auto addressStr = TWTelegramAddressDescription(address);
+    auto address = TWTONAddressCreateWithPublicKey(publicKey);
+    auto addressStr = TWTONAddressDescription(address);
     ASSERT_EQ(std::string("Ef9gwEFBxqe5bWhhXnqR0mWtDzqaki6a6ckB1PqD9dPA0KTM"), TWStringUTF8Bytes(addressStr));
 }
 
-TEST(TWTelegramAddress, HDWallet) {
+TEST(TWTONAddress, HDWallet) {
     auto mnemonic = "shoot island position soft burden budget tooth cruel issue economy destroy above";
     auto passphrase = "";
 
@@ -54,8 +54,8 @@ TEST(TWTelegramAddress, HDWallet) {
 
     auto privateKey = TWHDWalletGetKey(wallet.get(), TWCoinTypeDerivationPath(TWCoinTypeSolana));
     auto publicKey = TWPrivateKeyGetPublicKeyEd25519(privateKey);
-    auto address = TWTelegramAddressCreateWithPublicKey(publicKey);
-    auto addressStr = WRAPS(TWTelegramAddressDescription(address));
+    auto address = TWTONAddressCreateWithPublicKey(publicKey);
+    auto addressStr = WRAPS(TWTONAddressDescription(address));
 
     assertStringsEqual(addressStr, "Ef/ILPbxb92d5s9xvpznI7YLyh7kloPJdj1dEFTmHwrX97Hf");
 }

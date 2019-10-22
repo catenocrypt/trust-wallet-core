@@ -4,23 +4,23 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
-#include "Telegram/Cell.h"
+#include "TON/Cell.h"
 #include "HexCoding.h"
 
 #include <gtest/gtest.h>
 
 using namespace std;
 using namespace TW;
-using namespace TW::Telegram;
+using namespace TW::TON;
 
-TEST(TelegramCell, SliceHash)
+TEST(TONCell, SliceHash)
 {
     {
-        Slice s = Slice::createFromBytesStr("123456");
+        Slice s = Slice::createFromHex("123456");
         ASSERT_EQ("bf7cbe09d71a1bcc373ab9a764917f730a6ed951ffa1a7399b7abd8f8fd73cb4", hex(s.hash()));
     }
     {
-        Slice s = Slice::createFromBytesStr("00000000F61CF0BC8E891AD7636E0CD35229D579323AA2DA827EB85D8071407464DC2FA3");
+        Slice s = Slice::createFromHex("00000000F61CF0BC8E891AD7636E0CD35229D579323AA2DA827EB85D8071407464DC2FA3");
         ASSERT_EQ("3f8e0f65857d989321be21d1b55a01c47b5d5da6b463292841302d4b8a2a39e5", hex(s.hash()));
     }
     {
@@ -32,7 +32,7 @@ TEST(TelegramCell, SliceHash)
     }
 }
 
-TEST(TelegramCell, CellSimple)
+TEST(TONCell, CellSimple)
 {
     {
         Cell cell;
@@ -69,7 +69,7 @@ TEST(TelegramCell, CellSimple)
     }
 }
 
-TEST(TelegramCell, CellBits)
+TEST(TONCell, CellBits)
 {
     {
         // Hash of cell with bits
@@ -82,7 +82,7 @@ TEST(TelegramCell, CellBits)
     }
 }
 
-TEST(TelegramCell, CellWithChild)
+TEST(TONCell, CellWithChild)
 {
     {
         // cell with one child
@@ -124,7 +124,7 @@ TEST(TelegramCell, CellWithChild)
     }
 }
 
-TEST(TelegramCell, CellError)
+TEST(TONCell, CellError)
 {
     {
         Cell cell;
@@ -140,7 +140,7 @@ TEST(TelegramCell, CellError)
     }
 }
 
-TEST(TelegramCell, CellErrorTooManyCells)
+TEST(TONCell, CellErrorTooManyCells)
 {
     {
         Cell cell;
@@ -154,7 +154,7 @@ TEST(TelegramCell, CellErrorTooManyCells)
     }
 }
 
-TEST(TelegramCell, CellStateInit)
+TEST(TONCell, CellStateInit)
 {
     {
         // StateInit, with bits slice value and two children
