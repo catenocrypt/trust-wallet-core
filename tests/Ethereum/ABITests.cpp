@@ -53,6 +53,17 @@ TEST(ABI, EncodeNegativeBigInt) {
     EXPECT_EQ(hex(encoded), "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 }
 
+TEST(ABI, EncodeBigIntOverflow) {
+    Data encoded;
+    try {
+        encode(int256_t("F123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0"), encoded);
+    } catch (std::exception ex) {
+        // expected exception
+        return;
+    }
+    FAIL() << "publicKey not found in message.accountKeys";
+}
+
 TEST(ABI, Signature) {
     Data encoded;
     auto function = Function("baz", std::make_tuple(uint256_t(69u), true));
@@ -103,6 +114,19 @@ TEST(ABI, FunctionWithDynamicArgumentsCase2) {
     EXPECT_EQ(hex(encoded.begin() + 196, encoded.begin() + 228), "0000000000000000000000000000000000000000000000000000000000000789");
     EXPECT_EQ(hex(encoded.begin() + 228, encoded.begin() + 260), "000000000000000000000000000000000000000000000000000000000000000d");
     EXPECT_EQ(hex(encoded.begin() + 260, encoded.begin() + 292), "48656c6c6f2c20776f726c642100000000000000000000000000000000000000");
+}
+
+TEST(ABI, StaticBytes) {
+    Data encoded;
+    encode(std::array<uint8_t, 6>{0, 1, 2, 3, 4, 5}, encoded);
+    EXPECT_EQ(hex(encoded), "0001020304050000000000000000000000000000000000000000000000000000");
+}
+
+TEST(ABI, DynamicBytes) {
+    Data encoded;
+    encode(std::vector<uint8_t>{0, 1, 2, 3, 4, 5}, encoded);
+    EXPECT_EQ(hex(encoded), "0000000000000000000000000000000000000000000000000000000000000006"\
+        "0001020304050000000000000000000000000000000000000000000000000000");
 }
 
 } // namespace TW::Ethereum
