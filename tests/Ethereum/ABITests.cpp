@@ -7,22 +7,25 @@
 #include "Ethereum/ABI.h"
 #include "HexCoding.h"
 
+//#include <TrustWalletCore/TWEthABI.h>
+
 #include <gtest/gtest.h>
 
 namespace TW::Ethereum {
 
-TEST(ABI, EncodeTrue) {
-    Data encoded;
-    encode(true, encoded);
+TEST(ABI, EncodeBool) {
+    {   // True
+        Data encoded;
+        encode(true, encoded);
 
-    EXPECT_EQ(hex(encoded), "0000000000000000000000000000000000000000000000000000000000000001");
-}
+        EXPECT_EQ(hex(encoded), "0000000000000000000000000000000000000000000000000000000000000001");
+    }
+    {   // False
+        Data encoded;
+        encode(false, encoded);
 
-TEST(ABI, EncodeFalse) {
-    Data encoded;
-    encode(false, encoded);
-
-    EXPECT_EQ(hex(encoded), "0000000000000000000000000000000000000000000000000000000000000000");
+        EXPECT_EQ(hex(encoded), "0000000000000000000000000000000000000000000000000000000000000000");
+    }
 }
 
 TEST(ABI, EncodeUInt) {
@@ -64,7 +67,7 @@ TEST(ABI, EncodeBigIntOverflow) {
     FAIL() << "publicKey not found in message.accountKeys";
 }
 
-TEST(ABI, Signature) {
+TEST(ABI, EncodeSignature) {
     Data encoded;
     auto function = Function("baz", std::make_tuple(uint256_t(69u), true));
     encode(function, encoded);
@@ -75,7 +78,7 @@ TEST(ABI, Signature) {
     EXPECT_EQ(hex(encoded.begin() +  36, encoded.begin() + 68 ), "0000000000000000000000000000000000000000000000000000000000000001");
 }
 
-TEST(ABI, FunctionWithDynamicArgumentsCase1) {
+TEST(ABI, EncodeFunctionWithDynamicArgumentsCase1) {
     Data encoded;
     auto function = Function("sam", std::make_tuple(Data{0x64, 0x61, 0x76, 0x65}, true, std::vector<uint256_t>{1, 2, 3}));
     encode(function, encoded);
@@ -93,7 +96,7 @@ TEST(ABI, FunctionWithDynamicArgumentsCase1) {
     EXPECT_EQ(hex(encoded.begin() + 260, encoded.begin() + 292), "0000000000000000000000000000000000000000000000000000000000000003");
 }
 
-TEST(ABI, FunctionWithDynamicArgumentsCase2) {
+TEST(ABI, EncodeFunctionWithDynamicArgumentsCase2) {
     Data encoded;
     auto function = Function("f", std::make_tuple(
         uint256_t(0x123),
@@ -116,17 +119,23 @@ TEST(ABI, FunctionWithDynamicArgumentsCase2) {
     EXPECT_EQ(hex(encoded.begin() + 260, encoded.begin() + 292), "48656c6c6f2c20776f726c642100000000000000000000000000000000000000");
 }
 
-TEST(ABI, StaticBytes) {
+TEST(ABI, EncodeStaticBytes) {
     Data encoded;
     encode(std::array<uint8_t, 6>{0, 1, 2, 3, 4, 5}, encoded);
     EXPECT_EQ(hex(encoded), "0001020304050000000000000000000000000000000000000000000000000000");
 }
 
-TEST(ABI, DynamicBytes) {
+TEST(ABI, EncodeDynamicBytes) {
     Data encoded;
     encode(std::vector<uint8_t>{0, 1, 2, 3, 4, 5}, encoded);
     EXPECT_EQ(hex(encoded), "0000000000000000000000000000000000000000000000000000000000000006"\
         "0001020304050000000000000000000000000000000000000000000000000000");
+}
+
+TEST(ABI, Decode) {
+    Data encoded = parse_hex("000000000000000000000000000000000000000000000000000000000000002a");
+    uint256_t decoded = decodeUInt256(encoded);
+    EXPECT_EQ(uint256_t(42), decoded);
 }
 
 } // namespace TW::Ethereum

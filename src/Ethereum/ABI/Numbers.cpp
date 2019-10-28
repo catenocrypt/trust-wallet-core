@@ -4,147 +4,152 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
-#pragma once
+#include "Numbers.h"
 
 #include "../../Data.h"
 #include "../../uint256.h"
 
-namespace TW::Ethereum {
+using namespace TW;
+namespace TW::Ethereum
+{
 
-static constexpr std::size_t encodedIntSize = 32;
+//static constexpr std::size_t encodedIntSize = 32;
 
 // uint256_t
 
-inline bool is_dynamic(uint256_t) {
+/*
+bool is_dynamic(uint256_t) {
     return false;
 }
 
-inline std::size_t size(uint256_t) {
+std::size_t size(uint256_t) {
     return encodedIntSize;
 }
 
-inline void encode(uint256_t value, Data& data) {
+void encode(uint256_t value, Data& data) {
     Data bytes = store(value);
 
     append(data, Data(encodedIntSize - bytes.size()));
     append(data, bytes);
 }
 
-inline std::string type_string(uint256_t value) {
+std::string type_string(uint256_t value) {
     return "uint256";
 }
 
 // int256_t
 
-inline bool is_dynamic(int256_t) {
+bool is_dynamic(int256_t) {
     return false;
 }
 
-inline std::size_t size(int256_t) {
+std::size_t size(int256_t) {
     return encodedIntSize;
 }
 
-inline void encode(int256_t value, Data& data) {
+void encode(int256_t value, Data& data) {
     encode(static_cast<uint256_t>(value), data);
 }
 
-inline std::string type_string(int256_t value) {
+std::string type_string(int256_t value) {
     return "int256";
 }
 
 // bool
 
-inline bool is_dynamic(bool) {
+bool is_dynamic(bool) {
     return false;
 }
 
-inline std::size_t size(bool) {
+std::size_t size(bool) {
     return encodedIntSize;
 }
 
-inline void encode(bool v, Data& data) {
+void encode(bool v, Data& data) {
     append(data, Data(encodedIntSize - 1));
     data.push_back(v ? 1 : 0);
 }
 
-inline std::string type_string(bool value) {
+std::string type_string(bool value) {
     return "bool";
 }
 
 // int32
 
-inline bool is_dynamic(int32_t) {
+bool is_dynamic(int32_t) {
     return false;
 }
 
-inline std::size_t size(int32_t) {
+std::size_t size(int32_t) {
     return encodedIntSize;
 }
 
-inline void encode(int32_t v, Data& data) {
+void encode(int32_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
-inline std::string type_string(int32_t value) {
+std::string type_string(int32_t value) {
     return "int32";
 }
 
 // uint32
 
-inline bool is_dynamic(uint32_t) {
+bool is_dynamic(uint32_t) {
     return false;
 }
 
-inline std::size_t size(uint32_t) {
+std::size_t size(uint32_t) {
     return encodedIntSize;
 }
 
-inline void encode(uint32_t v, Data& data) {
+void encode(uint32_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
-inline std::string type_string(uint32_t value) {
+std::string type_string(uint32_t value) {
     return "uint32";
 }
 
 // int64
 
-inline bool is_dynamic(int64_t) {
+bool is_dynamic(int64_t) {
     return false;
 }
 
-inline std::size_t size(int64_t) {
+std::size_t size(int64_t) {
     return encodedIntSize;
 }
 
-inline void encode(int64_t v, Data& data) {
+void encode(int64_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
-inline std::string type_string(int64_t value) {
+std::string type_string(int64_t value) {
     return "int64";
 }
 
 // uint64
 
-inline bool is_dynamic(uint64_t) {
+bool is_dynamic(uint64_t) {
     return false;
 }
 
-inline std::size_t size(uint64_t) {
+std::size_t size(uint64_t) {
     return encodedIntSize;
 }
 
-inline void encode(uint64_t v, Data& data) {
+void encode(uint64_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
-inline std::string type_string(uint64_t value) {
+std::string type_string(uint64_t value) {
     return "uint64";
 }
 
-inline uint256_t decodeUInt256(const Data& encoded) {
+uint256_t decodeUInt256(const Data& encoded) {
     uint256_t decoded = load(encoded);
     return decoded;    
 }
+*/
+
 } // namespace TW::Ethereum
