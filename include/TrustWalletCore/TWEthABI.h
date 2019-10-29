@@ -9,6 +9,9 @@ TW_EXPORT_STATIC_METHOD
 TWString *_Nonnull TWEthABIEncodeUint32(uint32_t i);
 
 TW_EXPORT_STATIC_METHOD
-TWString *_Nonnull TWEthABI_AppendHello(TWString *_Nonnull str);
+TWString *_Nonnull TWEthABIEncodeString(TWString *_Nonnull string);
+
+TW_EXPORT_STATIC_METHOD
+bool TWEthABIDecodeString(TWString *_Nonnull encoded_in, TWString *_Nonnull *_Nonnull decoded_out);
 
 TW_EXTERN_C_END

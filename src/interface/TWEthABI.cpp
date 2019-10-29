@@ -18,9 +18,19 @@ TWString *_Nonnull TWEthABIEncodeUint32(uint32_t i) {
     return encHex;
 }
 
-TWString *_Nonnull TWEthABI_AppendHello(TWString *_Nonnull str) {
-    std::string str2 = TWStringUTF8Bytes(str);
-    std::string str3 = str2 + " Hello";
-    TWString* str4 = TWStringCreateWithUTF8Bytes(str3.data());
-    return str4;
+TWString *_Nonnull TWEthABIEncodeString(TWString *_Nonnull string) {
+    Data encoded;
+    encode(std::string(TWStringUTF8Bytes(string)), encoded);
+    TWString* encHex = TWStringCreateWithUTF8Bytes(hex(encoded).data());
+    return encHex;
+}
+
+bool TWEthABIDecodeString(TWString *_Nonnull encoded_in, TWString *_Nonnull *_Nonnull decoded_out)
+{
+    Data encoded = parse_hex(std::string(TWStringUTF8Bytes(encoded_in))); //data(std::string(TWStringUTF8Bytes(encoded_in)));
+    std::string decoded;
+    size_t offset = 0;
+    bool res = decode(encoded, decoded, offset);
+    *decoded_out = TWStringCreateWithUTF8Bytes(decoded.data());
+    return res;
 }
