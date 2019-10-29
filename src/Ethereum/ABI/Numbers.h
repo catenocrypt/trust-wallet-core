@@ -23,12 +23,9 @@ inline std::size_t size(uint256_t) {
     return encodedIntSize;
 }
 
-inline void encode(uint256_t value, Data& data) {
-    Data bytes = store(value);
+void encode(uint256_t value, Data& data);
 
-    append(data, Data(encodedIntSize - bytes.size()));
-    append(data, bytes);
-}
+bool decode(const Data& encoded, uint256_t& decoded, size_t& offset_inout);
 
 inline std::string type_string(uint256_t value) {
     return "uint256";
@@ -48,6 +45,18 @@ inline void encode(int256_t value, Data& data) {
     encode(static_cast<uint256_t>(value), data);
 }
 
+template<typename T>
+inline bool decodeGenericNumber(const Data& encoded, T& decoded, size_t& offset_inout) {
+    uint256_t decodedUInt256;
+    bool res = decode(encoded, decodedUInt256, offset_inout);
+    decoded = static_cast<T>(decodedUInt256);
+    return res;
+}
+
+inline bool decode(const Data& encoded, int256_t& decoded, size_t& offset_inout) {
+    return decodeGenericNumber<int256_t>(encoded, decoded, offset_inout);
+}
+
 inline std::string type_string(int256_t value) {
     return "int256";
 }
@@ -62,9 +71,10 @@ inline std::size_t size(bool) {
     return encodedIntSize;
 }
 
-inline void encode(bool v, Data& data) {
-    append(data, Data(encodedIntSize - 1));
-    data.push_back(v ? 1 : 0);
+void encode(bool v, Data& data);
+
+inline bool decode(const Data& encoded, bool& decoded, size_t& offset_inout) {
+    return decodeGenericNumber<bool>(encoded, decoded, offset_inout);
 }
 
 inline std::string type_string(bool value) {
@@ -85,6 +95,10 @@ inline void encode(int32_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
+inline bool decode(const Data& encoded, int32_t& decoded, size_t& offset_inout) {
+    return decodeGenericNumber<int32_t>(encoded, decoded, offset_inout);
+}
+
 inline std::string type_string(int32_t value) {
     return "int32";
 }
@@ -101,6 +115,10 @@ inline std::size_t size(uint32_t) {
 
 inline void encode(uint32_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
+}
+
+inline bool decode(const Data& encoded, uint32_t& decoded, size_t& offset_inout) {
+    return decodeGenericNumber<uint32_t>(encoded, decoded, offset_inout);
 }
 
 inline std::string type_string(uint32_t value) {
@@ -121,6 +139,10 @@ inline void encode(int64_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
+inline bool decode(const Data& encoded, int64_t& decoded, size_t& offset_inout) {
+    return decodeGenericNumber<int64_t>(encoded, decoded, offset_inout);
+}
+
 inline std::string type_string(int64_t value) {
     return "int64";
 }
@@ -139,12 +161,14 @@ inline void encode(uint64_t v, Data& data) {
     encode(static_cast<uint256_t>(v), data);
 }
 
+inline bool decode(const Data& encoded, uint64_t& decoded, size_t& offset_inout) {
+    return decodeGenericNumber<uint64_t>(encoded, decoded, offset_inout);
+}
+
 inline std::string type_string(uint64_t value) {
     return "uint64";
 }
 
-inline uint256_t decodeUInt256(const Data& encoded) {
-    uint256_t decoded = load(encoded);
-    return decoded;    
-}
+bool decode(const Data& encoded, uint8_t& decoded, size_t& offset_inout);
+
 } // namespace TW::Ethereum

@@ -6,25 +6,7 @@
 
 #include "Numbers.h"
 
-#include "../../Data.h"
-#include "../../uint256.h"
-
-using namespace TW;
-namespace TW::Ethereum
-{
-
-//static constexpr std::size_t encodedIntSize = 32;
-
-// uint256_t
-
-/*
-bool is_dynamic(uint256_t) {
-    return false;
-}
-
-std::size_t size(uint256_t) {
-    return encodedIntSize;
-}
+namespace TW::Ethereum {
 
 void encode(uint256_t value, Data& data) {
     Data bytes = store(value);
@@ -33,36 +15,14 @@ void encode(uint256_t value, Data& data) {
     append(data, bytes);
 }
 
-std::string type_string(uint256_t value) {
-    return "uint256";
-}
-
-// int256_t
-
-bool is_dynamic(int256_t) {
-    return false;
-}
-
-std::size_t size(int256_t) {
-    return encodedIntSize;
-}
-
-void encode(int256_t value, Data& data) {
-    encode(static_cast<uint256_t>(value), data);
-}
-
-std::string type_string(int256_t value) {
-    return "int256";
-}
-
-// bool
-
-bool is_dynamic(bool) {
-    return false;
-}
-
-std::size_t size(bool) {
-    return encodedIntSize;
+bool decode(const Data& encoded, uint256_t& decoded, size_t& offset_inout) {
+    decoded = 0u;
+    if (encoded.empty() || (encoded.size() < (encodedIntSize + offset_inout))) {
+        return false;
+    }
+    decoded = loadWithOffset(encoded, offset_inout);
+    offset_inout += encodedIntSize;
+    return true;
 }
 
 void encode(bool v, Data& data) {
@@ -70,86 +30,14 @@ void encode(bool v, Data& data) {
     data.push_back(v ? 1 : 0);
 }
 
-std::string type_string(bool value) {
-    return "bool";
+bool decode(const Data& encoded, uint8_t& decoded, size_t& offset_inout) {
+    decoded = 0u;
+    if (encoded.empty() || (encoded.size() < (offset_inout + 1))) {
+        return false;
+    }
+    decoded = encoded[offset_inout];
+    offset_inout += 1;
+    return true;
 }
-
-// int32
-
-bool is_dynamic(int32_t) {
-    return false;
-}
-
-std::size_t size(int32_t) {
-    return encodedIntSize;
-}
-
-void encode(int32_t v, Data& data) {
-    encode(static_cast<uint256_t>(v), data);
-}
-
-std::string type_string(int32_t value) {
-    return "int32";
-}
-
-// uint32
-
-bool is_dynamic(uint32_t) {
-    return false;
-}
-
-std::size_t size(uint32_t) {
-    return encodedIntSize;
-}
-
-void encode(uint32_t v, Data& data) {
-    encode(static_cast<uint256_t>(v), data);
-}
-
-std::string type_string(uint32_t value) {
-    return "uint32";
-}
-
-// int64
-
-bool is_dynamic(int64_t) {
-    return false;
-}
-
-std::size_t size(int64_t) {
-    return encodedIntSize;
-}
-
-void encode(int64_t v, Data& data) {
-    encode(static_cast<uint256_t>(v), data);
-}
-
-std::string type_string(int64_t value) {
-    return "int64";
-}
-
-// uint64
-
-bool is_dynamic(uint64_t) {
-    return false;
-}
-
-std::size_t size(uint64_t) {
-    return encodedIntSize;
-}
-
-void encode(uint64_t v, Data& data) {
-    encode(static_cast<uint256_t>(v), data);
-}
-
-std::string type_string(uint64_t value) {
-    return "uint64";
-}
-
-uint256_t decodeUInt256(const Data& encoded) {
-    uint256_t decoded = load(encoded);
-    return decoded;    
-}
-*/
 
 } // namespace TW::Ethereum
