@@ -11,3 +11,4 @@
 #include "ABI/Array.h"
 #include "ABI/Tuple.h"
 #include "ABI/Function.h"
+#include "ABI/FunctionNG.h"
