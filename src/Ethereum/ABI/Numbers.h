@@ -4,12 +4,13 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
+/*
 #pragma once
 
 #include "../../Data.h"
 #include "../../uint256.h"
 
-namespace TW::Ethereum {
+namespace TW::Ethereum::ABI {
 
 static constexpr std::size_t encodedIntSize = 32;
 
@@ -171,4 +172,5 @@ inline std::string type_string(uint64_t value) {
 
 bool decode(const Data& encoded, uint8_t& decoded, size_t& offset_inout);
 
-} // namespace TW::Ethereum
+} // namespace TW::Ethereum::ABI
+*/

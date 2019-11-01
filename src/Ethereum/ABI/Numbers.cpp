@@ -4,9 +4,11 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
+/*
 #include "Numbers.h"
+#include "Util.h"
 
-namespace TW::Ethereum {
+namespace TW::Ethereum::ABI {
 
 void encode(uint256_t value, Data& data) {
     Data bytes = store(value);
@@ -40,4 +42,5 @@ bool decode(const Data& encoded, uint8_t& decoded, size_t& offset_inout) {
     return true;
 }
 
-} // namespace TW::Ethereum
+} // namespace TW::Ethereum::ABI
+*/

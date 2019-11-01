@@ -4,17 +4,20 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
+/*
 #pragma once
+
+#include "Numbers.h"
+#include "Array.h"
 
 #include "../../Data.h"
 #include "../../uint256.h"
-#include "Numbers.h"
 
 #include <string>
 #include <tuple>
 #include <type_traits>
 
-namespace TW::Ethereum {
+namespace TW::Ethereum::ABI {
 
 template <typename T, typename... Ts>
 inline auto head(std::tuple<T, Ts...> t) {
@@ -155,4 +158,5 @@ inline bool decode(const Data& encoded, std::tuple<T...>& tuple_inout, size_t& o
     return decodeTupleLarge(encoded, tuple_inout, offset_inout);
 }
 
-} // namespace TW::Ethereum
+} // namespace TW::Ethereum::ABI
+*/

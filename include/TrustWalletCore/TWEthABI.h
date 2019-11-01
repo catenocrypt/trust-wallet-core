@@ -12,9 +12,9 @@ TW_EXTERN_C_BEGIN
  * Create allocates memory, the delete call should be called at the end to release memory.
  * Example:
  *   TWEthABIFunction func = TWEthABIFunctionCreate("baz");
- *   int p1index = TWEthABIFuncAddInParamByte(func, 69);
- *   int p2index = TWEthABIFuncAddOutParamByte(func);
- *   uint8_t p2val = TWEthABIFuncGetOutParamByte(func, p1index);
+ *   int p1index = TWEthABIFuncAddInParamInt32(func, 69);
+ *   int p2index = TWEthABIFuncAddOutParamInt32(func);
+ *   uint8_t p2val = TWEthABIFuncGetOutParamInt32(func, p1index);
  *   TWEthABIFunctionDelete(&func);
  */
 typedef void *_Nonnull TWEthABIFunction;
@@ -26,19 +26,20 @@ TWEthABIFunction TWEthABIFunctionCreate(const char *_Nonnull name);
 void TWEthABIFunctionDelete(TWEthABIFunction *_Nonnull function_inout);
 
 /// Adds an input parameter of the given type. Returns the index of the parameter (0-based).
-int TWEthABIFuncAddInParamByte(TWEthABIFunction func, uint8_t val);
+int TWEthABIFuncAddInParamInt32(TWEthABIFunction func, uint8_t val);
 int TWEthABIFuncAddInParamUInt256(TWEthABIFunction func, TWData *_Nonnull val);
 
 /// Adds an output parameter of the given type. Returns the index of the parameter (0-based).
-int TWEthABIFuncAddOutParamByte(TWEthABIFunction func);
+int TWEthABIFuncAddOutParamInt32(TWEthABIFunction func);
 int TWEthABIFuncAddOutParamUInt256(TWEthABIFunction func);
 
 /// Obtain an output parameter value.
-uint8_t TWEthABIFuncGetOutParamByte(TWEthABIFunction func, int paramIndex);
+uint8_t TWEthABIFuncGetOutParamInt32(TWEthABIFunction func, int paramIndex);
 /// Obtain an output parameter value. Return value should be deleted.
 TWData *_Nonnull TWEthABIFuncGetOutParamUInt256(TWEthABIFunction func, int paramIndex);
 
-
+/// Encode function to Eth ABI binary
+TWData *_Nonnull TWEthABIFuncEncode(TWEthABIFunction func);
 
 
 
