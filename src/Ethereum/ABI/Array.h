@@ -21,12 +21,12 @@ private:
     ParamSet _params;
 
 public:
-    //ParamArray() = default;
+    ParamArray() = default;
     ParamArray(ParamBase* param1) : ParamCollection() { addParam(param1); }
     ParamArray(std::vector<ParamBase*> params) : ParamCollection() { setVal(params); }
     void setVal(std::vector<ParamBase*> params) { addParams(params); }
     std::vector<ParamBase*> const& getVal() const { return _params.getParams(); }
-    void addParam(ParamBase* param);
+    int addParam(ParamBase* param);
     void addParams(std::vector<ParamBase*> params);
     std::string getFirstType() const;
     ParamBase* getParam(int paramIndex) { return _params.getParamUnsafe(paramIndex); }

@@ -10,11 +10,11 @@
 
 using namespace TW::Ethereum::ABI;
 
-void ParamArray::addParam(ParamBase* param) {
-    if (param == nullptr) return;
+int ParamArray::addParam(ParamBase* param) {
+    if (param == nullptr) return -1;
     assert(param != nullptr);
-    if (_params.getCount() >= 1 && param->getType() != getFirstType()) return; // do not add different types
-    _params.addParam(param);
+    if (_params.getCount() >= 1 && param->getType() != getFirstType()) return -2; // do not add different types
+    return _params.addParam(param);
 }
 
 void ParamArray::addParams(std::vector<ParamBase*> params) {

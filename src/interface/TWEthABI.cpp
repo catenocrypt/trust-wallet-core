@@ -1,10 +1,8 @@
-#include <TrustWalletCore/TWEthABI.h>
+#include <TrustWalletCore/TWEthAbi.h>
 #include <TrustWalletCore/TWString.h>
 #include <TrustWalletCore/TWData.h>
 
-#include "Ethereum/ABI.h"  // TODO include this full ABI, once all sub-headers are inlined
-//#include "Ethereum/ABI/Numbers.h"
-//#include "Ethereum/ABI/Array.h"
+#include "Ethereum/ABI.h"
 #include "Data.h"
 #include "HexCoding.h"
 #include "../uint256.h"
@@ -17,79 +15,118 @@ using namespace TW::Ethereum;
 using namespace TW::Ethereum::ABI;
 
 
-TWEthABIFunction TWEthABIFunctionCreate(const char *_Nonnull name)
+TW_EthAbiFunction TWEthAbiFunctionCreate(TWString *_Nonnull name)
 {
-    auto func = new Function(name);
-    return static_cast<TWEthABIFunction>(func);
+    auto func = new Function(TWStringUTF8Bytes(name));
+    TWStringDelete(name);
+    return static_cast<TW_EthAbiFunction>(func);
 }
 
-void TWEthABIFunctionDelete(TWEthABIFunction *_Nonnull function_inout)
+void TWEthAbiFunctionDelete(TW_EthAbiFunction function)
 {
-    auto func = static_cast<const Function*>(*function_inout);
+    auto func = static_cast<const Function*>(function);
+    assert(func != nullptr);
     delete func;
-    *function_inout = nullptr;
 }
 
-int TWEthABIFuncAddInParamInt32(TWEthABIFunction func, uint8_t val)
+TWString *_Nonnull TWEthAbiFuncGetType(TW_EthAbiFunction func)
 {
     auto function = static_cast<Function*>(func);
     assert(function != nullptr);
+    std::string sign = function->getType();
+    return TWStringCreateWithUTF8Bytes(sign.c_str());
+}
+
+TW_EthAbiParam TWEthAbiCreateParamBool(bool val) {
+    auto param = new ParamBool(val);
+    return static_cast<TW_EthAbiParam>(param);
+}
+
+TW_EthAbiParam TWEthAbiCreateParamUInt32(uint32_t val) {
+    auto param = new ParamUInt32(val);
+    return static_cast<TW_EthAbiParam>(param);
+}
+
+TW_EthAbiParam TWEthAbiCreateParamInt32(int32_t val) {
     auto param = new ParamInt32(val);
-    return function->addInParam(static_cast<ParamBase*>(param));
+    return static_cast<TW_EthAbiParam>(param);
 }
 
-int TWEthABIFuncAddInParamUInt256(TWEthABIFunction func, TWData *__nonnull val)
-{
-    auto function = static_cast<Function*>(func);
-    assert(function != nullptr);
+TW_EthAbiParam TWEthAbiCreateParamUInt256(TWData *_Nonnull val) {
     uint256_t val2 = load(*static_cast<const Data*>(val));
+    TWDataDelete(val); // remove original
     auto param = new ParamUInt256(val2);
-    return function->addInParam(static_cast<ParamBase*>(param));
+    return static_cast<TW_EthAbiParam>(param);
 }
 
-int TWEthABIFuncAddOutParamInt32(TWEthABIFunction func)
-{
+TW_EthAbiParam TWEthAbiCreateParamString(TWString *_Nonnull val) {
+    std::string valStr(TWStringUTF8Bytes(val));
+    auto param = new ParamString(valStr);
+    return static_cast<TW_EthAbiParam>(param);
+}
+
+TW_EthAbiParam TWEthAbiCreateParamByteArray(TWData *_Nonnull val) {
+    Data dataDat = TW::data(TWDataBytes(val), TWDataSize(val));
+    auto param = new ParamByteArray(dataDat);
+    TWDataDelete(val);
+    return static_cast<TW_EthAbiParam>(param);
+}
+
+TW_EthAbiParam TWEthAbiCreateParamByteArrayFix(int size, TWData *_Nonnull val) {
+    Data dataDat = TW::data(TWDataBytes(val), TWDataSize(val));
+    auto param = new ParamByteArrayFix(size, dataDat);
+    TWDataDelete(val);
+    return static_cast<TW_EthAbiParam>(param);
+}
+
+bool TWEthAbiParamBoolVal(TW_EthAbiParam val) {
+    auto param = static_cast<ParamBool*>(val);
+    assert(param != nullptr);
+    return param->getVal();
+}
+
+uint32_t TWEthAbiParamInt32Val(TW_EthAbiParam val) {
+    auto param = static_cast<ParamInt32*>(val);
+    assert(param != nullptr);
+    return param->getVal();
+}
+
+TWData *_Nonnull TWEthAbiParamUInt256Val(TW_EthAbiParam val) {
+    auto param = static_cast<ParamUInt256*>(val);
+    assert(param != nullptr);
+    uint256_t val256 = param->getVal();
+    TW::Data valDat = TW::store(val256);
+    return TWDataCreateWithData(&valDat);
+}
+
+int TWEthAbiFuncAddInParam(TW_EthAbiFunction func, TW_EthAbiParam param) {
     auto function = static_cast<Function*>(func);
     assert(function != nullptr);
-    auto param = new ParamInt32();
-    return function->addOutParam(static_cast<ParamBase*>(param));
+    auto param2 = static_cast<ParamBase*>(param);
+    assert(param2 != nullptr);
+    return function->addInParam(param2);
 }
 
-int TWEthABIFuncAddOutParamUInt256(TWEthABIFunction func)
-{
+int TWEthAbiFuncAddOutParam(TW_EthAbiFunction func, TW_EthAbiParam param) {
     auto function = static_cast<Function*>(func);
     assert(function != nullptr);
-    auto param = new ParamUInt256();
-    return function->addOutParam(static_cast<ParamBase*>(param));
+    auto param2 = static_cast<ParamBase*>(param);
+    assert(param2 != nullptr);
+    return function->addOutParam(param2);
 }
 
-uint8_t TWEthABIFuncGetOutParamInt32(TWEthABIFunction func, int paramIndex) {
+TW_EthAbiParam TWEthAbiFuncGetOutParam(TW_EthAbiFunction func, int paramIndex) {
     auto function = static_cast<Function*>(func);
     assert(function != nullptr);
     ParamBase* baseParam = nullptr;
-    if (!function->getOutParam(paramIndex, &baseParam)) {
-        return 0;
+    if (!function->getOutParam(paramIndex, &baseParam) || baseParam == nullptr) {
+        return static_cast<TW_EthAbiParam>(nullptr);
     }
-    auto param2 = static_cast<ParamInt32*>(baseParam);
-    assert(param2 != nullptr);
-    return param2->getVal();
+    assert(baseParam != nullptr);
+    return static_cast<TW_EthAbiParam>(baseParam);
 }
 
-TWData *_Nonnull TWEthABIFuncGetOutParamUInt256(TWEthABIFunction func, int paramIndex) {
-    auto function = static_cast<Function*>(func);
-    assert(function != nullptr);
-    ParamBase* baseParam = nullptr;
-    if (!function->getOutParam(paramIndex, &baseParam)) {
-        return new Data(0);
-    }
-    auto param2 = static_cast<ParamUInt256*>(baseParam);
-    assert(param2 != nullptr);
-    Data data1 = store(param2->getVal());
-    Data* data2 = new Data(data1); // copy for allocation
-    return static_cast<TWData*>(data2);
-}
-
-TWData *_Nonnull TWEthABIFuncEncode(TWEthABIFunction func) {
+TWData *_Nonnull TWEthAbiFuncEncode(TW_EthAbiFunction func) {
     auto function = static_cast<Function*>(func);
     assert(function != nullptr);
     Data* encoded = new Data(); // allocated on heap
@@ -97,17 +134,27 @@ TWData *_Nonnull TWEthABIFuncEncode(TWEthABIFunction func) {
     return static_cast<TWData*>(encoded);
 }
 
-
-
-
-TWString *_Nonnull TWEthABIEncodeUint32(uint32_t i) {
-    Data encoded;
-    encode(i, encoded);
-    TWString* encHex = TWStringCreateWithUTF8Bytes(hex(encoded).data());
-    return encHex;
+TW_EthAbiParamArray TWEthAbiParamArrayCreate() {
+    auto param = new ParamArray();
+    return static_cast<TW_EthAbiParamArray>(param);
 }
 
-TWString *_Nonnull TWEthABIEncodeString(TWString *_Nonnull string) {
+void TWEthAbiParamArrayDelete(TW_EthAbiParamArray param) {
+    auto param2 = static_cast<const ParamArray*>(param);
+    assert(param2 != nullptr);
+    delete param2;
+}
+
+int TWEthAbiParamArrayAddParam(TW_EthAbiParamArray array, TW_EthAbiParam param) {
+    auto paramArray = static_cast<ParamArray*>(array);
+    assert(paramArray != nullptr);
+    auto param2 = static_cast<ParamBase*>(param);
+    assert(param2 != nullptr);
+    return paramArray->addParam(param2);
+}
+
+
+TWString *_Nonnull TWEthAbiEncodeString(TWString *_Nonnull string) {
     auto str2 = std::string(TWStringUTF8Bytes(string));
     Data encoded;
     ParamString::encodeString(str2, encoded);
@@ -115,8 +162,7 @@ TWString *_Nonnull TWEthABIEncodeString(TWString *_Nonnull string) {
     return encHex;
 }
 
-bool TWEthABIDecodeString(TWString *_Nonnull encoded_in, TWString *_Nonnull *_Nonnull decoded_out)
-{
+bool TWEthAbiDecodeString(TWString *_Nonnull encoded_in, TWString *_Nonnull *_Nonnull decoded_out) {
     Data encoded = parse_hex(std::string(TWStringUTF8Bytes(encoded_in))); //data(std::string(TWStringUTF8Bytes(encoded_in)));
     std::string decoded;
     size_t offset = 0;

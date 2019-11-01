@@ -12,3 +12,8 @@
 #include "ABI/Array.h"
 #include "ABI/Bytes.h"
 #include "ABI/Function.h"
+
+/// Wrapper for C interface.
+struct TWEthAbi {
+    TW::Ethereum::ABI::Function impl;
+};
