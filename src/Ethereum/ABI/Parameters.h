@@ -15,8 +15,7 @@
 
 namespace TW::Ethereum::ABI {
 
-// TODO move some impl to CPP file
-
+/// A set of parameters
 class ParamSet {
 private:
     std::vector<ParamBase*> _params;
@@ -25,128 +24,21 @@ public:
     ParamSet() = default;
     ParamSet(ParamBase* param1) { addParam(param1); }
     ParamSet(std::vector<ParamBase*> params) { addParams(params); }
-    ~ParamSet() {
-        for (auto p: _params) {
-            if (p != nullptr) {
-                delete p;
-            }
-        }
-        _params.clear();
-    }
+    ~ParamSet();
 
     /// Returns the index of the parameter
-    int addParam(ParamBase* param)
-    {
-        if (param == nullptr) return -1;
-        assert(param != nullptr);
-        _params.push_back(param);
-        return static_cast<int>(_params.size() - 1);
-    }
-
-    void addParams(std::vector<ParamBase*> params) {
-        for (auto p: params) addParam(p);
-    }
-
-    bool getParam(int paramIndex, ParamBase** param_out) const {
-        if (paramIndex >= _params.size() || paramIndex < 0) {
-            return false;
-        }
-        *param_out = _params[paramIndex];
-        return true;
-    }
-
-    ParamBase* getParamUnsafe(int paramIndex) const {
-        if (paramIndex < 0) {
-            return nullptr;
-        }
-        if (paramIndex >= _params.size()) {
-            return _params[_params.size() - 1];
-        }
-        return _params[paramIndex];
-    }
-
+    int addParam(ParamBase* param);
+    void addParams(std::vector<ParamBase*> params);
+    bool getParam(int paramIndex, ParamBase** param_out) const;
+    ParamBase* getParamUnsafe(int paramIndex) const;
     size_t getCount() const { return _params.size(); }
-
+    std::vector<ParamBase*> const& getParams() const { return _params; }
     /// Return the function type signature, of the form "baz(int32,uint256)"
-    std::string getType() const {
-        std::string t = "(";
-        int cnt = 0;
-        for(auto p: _params) {
-            if (cnt > 0) t += ",";
-            t += p->getType();
-            ++cnt;
-        }
-        t += ")";
-        return t;
-    }
-
-    size_t getSize() const {
-        size_t s = 0;
-        for(auto p: _params) {
-            s += p->getSize();
-        }
-        return 32 + Util::paddedTo32(s);
-    }
-
-    size_t getHeadSize() const {
-        size_t s = 0;
-        for(auto p: _params) {
-            if (p->isDynamic()) {
-                s += 32;
-            } else {
-                s += p->getSize();
-            }
-        }
-        return s;
-    }
-
-    void encodeSmall(size_t headSize, size_t& offset, Data& data) const {
-        for(auto p: _params) {
-            if (p->isDynamic()) {
-                // include only offset
-                TW::Ethereum::ABI::encode(uint256_t(headSize + offset), data);
-                offset += p->getSize();
-            } else {
-                p->encode(data);
-            }
-        }        
-    }
-
-    void encodeLarge(Data& data) const {
-        for(auto p: _params) {
-            if (p->isDynamic()) {
-                p->encode(data);
-            }
-        }        
-    }
-
-    void encode(Data& data) const {
-        // 2-pass encoding
-        size_t headSize = getHeadSize();
-        size_t dynamicOffset = 0;
-        encodeSmall(headSize, dynamicOffset, data);
-        encodeLarge(data);
-    }
-
-    bool decode(const Data& encoded, size_t& offset_inout) {
-        // pass 1: small values
-        for(auto p: _params) {
-            if (p->isDynamic()) {
-                uint256_t index;
-                if (!TW::Ethereum::ABI::decode(encoded, index, offset_inout)) { return false; }
-                // index is read but not used
-            } else {
-                if (!p->decode(encoded, offset_inout)) { return false; }
-            }
-        }
-        // pass2: large values    
-        for(auto p: _params) {
-            if (p->isDynamic()) {
-                if (!p->decode(encoded, offset_inout)) { return false; }
-            }
-        }
-        return true;
-    }
+    std::string getType() const;
+    size_t getSize() const;
+    size_t getHeadSize() const;
+    virtual void encode(Data& data) const;
+    virtual bool decode(const Data& encoded, size_t& offset_inout);
 };
 
 /// Collection of different parameters, dynamic length.

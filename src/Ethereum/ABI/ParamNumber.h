@@ -17,8 +17,6 @@
 
 namespace TW::Ethereum::ABI {
 
-// TODO move some impl to CPP file
-
 inline void encode(uint256_t value, Data& data) {
     Data bytes = store(value);
     append(data, Data(Util::encodedUInt256Size - bytes.size()));
