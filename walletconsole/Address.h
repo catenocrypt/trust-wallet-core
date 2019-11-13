@@ -16,15 +16,13 @@ namespace TW::WalletConsole {
 
 using namespace std;
 
-class Keys {
+class Address {
 private:
     const Coins& _coins;
 public:
-    Keys(const Coins& coins);
-    bool newkey(string& res);
-    /// Public key from private key, ED25519
-    bool pubpri(const string& coinid, const string& p, string& res);
-    bool pripub(const string& p, string& res);
+    Address(const Coins& coins) : _coins(coins) {}
+    bool addrpub(const string& coinid, const string& pubkey, string& res);
+    bool addrpri(const string& coinid, const string& prikey, string& res);
 };
 
 } // namespace TW::WalletConsole

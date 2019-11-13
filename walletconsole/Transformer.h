@@ -6,25 +6,17 @@
 
 #pragma once
 
-#include "Coins.h"
-#include "HexCoding.h"
-#include "Data.h"
-
 #include <string>
 
 namespace TW::WalletConsole {
 
 using namespace std;
 
-class Keys {
-private:
-    const Coins& _coins;
+class Transformer {
 public:
-    Keys(const Coins& coins);
-    bool newkey(string& res);
-    /// Public key from private key, ED25519
-    bool pubpri(const string& coinid, const string& p, string& res);
-    bool pripub(const string& p, string& res);
+    static bool hex(const string& p, string& res);
+    static bool base64enc(const string& p, string& res);
+    static bool base64dec(const string& p, string& res);
 };
 
 } // namespace TW::WalletConsole

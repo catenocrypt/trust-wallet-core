@@ -8,6 +8,8 @@
 
 #include "WalletConsole.h"
 #include "Data.h"
+#include "PrivateKey.h"
+#include "HexCoding.h"
 
 #include <iostream>
 #include <vector>
@@ -19,7 +21,7 @@ namespace TW::WalletConsole {
 
 using namespace std;
 
-Keys::Keys() {
+Keys::Keys(const Coins& coins) : _coins(coins) {
     // init pseudo-random
     ::srand(::time(NULL));
 }
@@ -32,6 +34,27 @@ bool Keys::newkey(string& res) {
     }
     res = hex(k);
     return true;
+}
+
+bool Keys::pubpri(const string& coinid, const string& p, string& res) {
+    Coin coin;
+    if (!_coins.findCoin(coinid, coin)) { return false; }
+    Data privDat;
+    try {
+        privDat = parse_hex(p);
+    } catch (exception& ex) {
+        cout << "Error: could not parse private key data" << endl;
+        return false; 
+    }
+    auto priv = PrivateKey(privDat);
+    auto pub = priv.getPublicKey((TWPublicKeyType)coin.pubKeyType);
+    res = hex(pub.bytes);
+    return true;
+}
+
+bool Keys::pripub(const string& p, string& res) {
+    cout << "Not yet implemented! :)" << endl;
+    return false;
 }
 
 } // namespace TW::WalletConsole

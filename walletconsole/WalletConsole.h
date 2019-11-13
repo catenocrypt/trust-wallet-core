@@ -8,6 +8,8 @@
 
 #include "Buffer.h"
 #include "Keys.h"
+#include "Coins.h"
+#include "Address.h"
 
 #include "Data.h"
 
@@ -20,24 +22,21 @@ namespace TW::WalletConsole {
 
 using namespace std;
 
-class Transformer {
-public:
-    static bool hex(const string& p, string& res);
-    static bool base64enc(const string& p, string& res);
-    static bool base64dec(const string& p, string& res);
-};
-
 class CommandExecutor {
 protected:
+    Coins _coins;
     Buffer _buffer;
     Keys _keys;
+    Address _address;
+    string _activeCoin;
 
 public:
-    CommandExecutor() {}
+    CommandExecutor();
     /// Put result in res.  Return true if meaningful result is returned. 
     bool executeOne(const string& cmd, const vector<string>& params, string& res);
     void execute(const string& cmd, const vector<string>& params);
     bool prepareInputs(const vector<string>& p_in, vector<string>& p_out);
+    bool setCoin(const string& coin);
     static void help();
     static bool checkMinParams(const vector<string>& params, int n);
 };
@@ -53,7 +52,8 @@ public:
     static vector<string> tokenize(const string& line);
     static string parseLine(const string& line, vector<string>& params);
     // trim from start (in place)
-    static void trimLeft(std::string &s);
+    static void trimLeft(std::string& s);
+    static void toLower(std::string& s);
 };
 
 } // namespace TW::WalletConsole

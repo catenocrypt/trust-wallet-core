@@ -6,6 +6,9 @@
 
 #include "WalletConsole.h"
 #include "Keys.h"
+#include "Coins.h"
+#include "Transformer.h"
+#include "Address.h"
 
 #include "Base64.h"
 #include "HexCoding.h"
@@ -21,55 +24,37 @@ using namespace std;
 using namespace TW;
 
 
-bool Transformer::hex(const string& p, string& res) {
-    res = TW::hex(data(p));
-    //cout << "Hex result:  '" << res << "'" << endl;
-    return true;
-}
-
-bool Transformer::base64enc(const string& p, string& res) {
-    try {
-        Data data = parse_hex(p);
-        try {
-            res = Base64::encode(data);
-            //cout << "Base64 encode result:  '" << res << "'" << endl;
-            return true;
-        } catch (exception& ex) {
-            cout << "Error while Base64 encode" << endl;
-            return false;
-        }
-    } catch (exception& ex) {
-        cout << "Error decoding input as hex" << endl;
-        return false;
-    }
-}
-
-bool Transformer::base64dec(const string& p, string& res) {
-    try {
-        auto dec = Base64::decode(p);
-        res = TW::hex(dec);
-        //cout << "Base64 decode result:  '" << res << "'" << endl;
-        return true;
-    } catch (exception& ex) {
-        cout << "Error while Base64 decode" << endl;
-        return false;
-    }
+CommandExecutor::CommandExecutor()
+    : 
+    _coins(), 
+    _keys(_coins),
+    _address(_coins)
+{
+    setCoin("btc");
 }
 
 void CommandExecutor::help() {
     cout << "Commands:" << endl;
-    cout << "  exit                Exit" << endl;
-    cout << "  quit                Exit" << endl;
-    cout << "  help                This help" << endl;
+    cout << "  exit                    Exit" << endl;
+    cout << "  quit                    Exit" << endl;
+    cout << "  help                    This help" << endl;
     cout << "Inputs, buffer:" << endl;
-    cout << "  #<n>                Print nth previous result" << endl;
-    cout << "  #                   Print last result" << endl;
+    cout << "  #<n>                    Print nth previous result" << endl;
+    cout << "  #                       Print last result" << endl;
+    cout << "Coins:" << endl;
+    cout << "  coins                   List known coins" << endl;
+    cout << "  coin <coin>             Set active coin, selected by its ID or symbol or name" << endl;
     cout << "Keys:" << endl;
-    cout << "  newkey              Create new pseudo-random 32-byte key" << endl;
+    cout << "  newkey                  Create new pseudo-random 32-byte key" << endl;
+    cout << "  pubpri <prikey>         Derive public key from private key (type is coin-dependent)" << endl;
+    cout << "  pripub <pubkey>         Derive private key from public key :)" << endl;
+    cout << "Addresses:" << endl;
+    cout << "  addrpub <pubkey>        Create <coin> address from public key." << endl;
+    cout << "  addrpri <prikey>        Create <coin> address from private key." << endl;
     cout << "Transformations:" << endl;
-    cout << "  hex <inp>           Encode given string to hex" << endl;
-    cout << "  base64enc <inp>     Encode given hex data to Base64" << endl;
-    cout << "  base64dec <inp>     Encode given Base64 string to hex data" << endl;
+    cout << "  hex <inp>               Encode given string to hex" << endl;
+    cout << "  base64enc <inp>         Encode given hex data to Base64" << endl;
+    cout << "  base64dec <inp>         Encode given Base64 string to hex data" << endl;
 }
 
 bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params_in, string& res) {
@@ -92,10 +77,20 @@ bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params
         cout << "Last result is:  " << params[0] << endl;
         return false;
     }
-    if (cmd == "hex") { if (checkMinParams(params, 1)) { return Transformer::hex(params[1], res); } }
-    if (cmd == "base64enc") { if (checkMinParams(params, 1)) { return Transformer::base64enc(params[1], res); } }
-    if (cmd == "base64dec") { if (checkMinParams(params, 1)) { return Transformer::base64dec(params[1], res); } }
+
+    if (cmd == "coins") { return _coins.coins(); }
+    if (cmd == "coin") { if (!checkMinParams(params, 1)) { return false; } setCoin(params[1]); return false; }
+
     if (cmd == "newkey") { return _keys.newkey(res); }
+    if (cmd == "pubpri") { if (!checkMinParams(params, 1)) { return false; } return _keys.pubpri(_activeCoin, params[1], res); }
+    if (cmd == "pripub") { if (!checkMinParams(params, 1)) { return false; } return _keys.pripub(params[1], res); }
+
+    if (cmd == "addrpub") { if (!checkMinParams(params, 1)) { return false; } return _address.addrpub(_activeCoin, params[1], res); }
+    if (cmd == "addrpri") { if (!checkMinParams(params, 1)) { return false; } return _address.addrpri(_activeCoin, params[1], res); }
+
+    if (cmd == "hex") { if (!checkMinParams(params, 1)) { return false; } return Transformer::hex(params[1], res); }
+    if (cmd == "base64enc") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64enc(params[1], res); }
+    if (cmd == "base64dec") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64dec(params[1], res); }
     // fallback
     help();
     return false;
@@ -111,7 +106,7 @@ void CommandExecutor::execute(const string& cmd, const vector<string>& params) {
             _buffer.addResult(resultStr);
         }
     } catch (exception& ex) {
-        cout << "Error while executing command" << endl;
+        cout << "Error while executing command, " << ex.what() << endl;
     }
 }
 
@@ -129,12 +124,22 @@ bool CommandExecutor::prepareInputs(const vector<string>& p_in, vector<string>& 
 }
 
 bool CommandExecutor::checkMinParams(const vector<string>& params, int n) {
-    if (params.size() >= n) {
+    if (params.size() - 1 >= n) {
         return true;
     }
-    cout << "At least " << n << " parameters are needed!" << endl;
-    help();
+    cout << "At least " << n << " parameters are needed! See 'help'" << endl;
+    //help();
     return false;
+}
+
+bool CommandExecutor::setCoin(const string& coin) {
+    Coin c;
+    if (!_coins.findCoin(coin, c)) {
+        return false;
+    }
+    _activeCoin = c.id;
+    cout << "Set active coin to: " << c.id << "    Use 'coin' to change.  (name: '" << c.name << "'  symbol: " << c.symbol << "  numericalid: " << c.c << ")" << endl;
+    return true;
 }
 
 void WalletConsole::loop() {
@@ -187,15 +192,20 @@ string WalletConsole::parseLine(const string& line, vector<string>& params) {
     auto tokens = tokenize(line);
     assert(tokens.size() > 0);
     auto cmd = tokens[0];
+    WalletConsole::toLower(cmd);
     params = tokens;
     return cmd;
 }
 
-// trim from start (in place)
-void WalletConsole::trimLeft(std::string &s) {
+void WalletConsole::trimLeft(std::string& s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
         return !std::isspace(ch);
     }));
+}
+
+void WalletConsole::toLower(std::string& s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+        [](unsigned char c){ return std::tolower(c); });
 }
 
 } // namespace TW::WalletConsole
