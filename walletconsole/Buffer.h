@@ -38,6 +38,8 @@ public:
     void addResult(const string& val);
     /// Return the given input string, if # or #n, substitute it
     bool prepareInput(const string& in, string& in_out);
+    /// Print out values
+    void buffer() const;
 };
 
 } // namespace TW::WalletConsole

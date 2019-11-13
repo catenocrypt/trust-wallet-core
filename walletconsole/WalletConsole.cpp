@@ -41,6 +41,7 @@ void CommandExecutor::help() {
     cout << "Inputs, buffer:" << endl;
     cout << "  #<n>                    Print nth previous result" << endl;
     cout << "  #                       Print last result" << endl;
+    cout << "  buffer                  Print buffer values" << endl;
     cout << "Coins:" << endl;
     cout << "  coins                   List known coins" << endl;
     cout << "  coin <coin>             Set active coin, selected by its ID or symbol or name" << endl;
@@ -75,11 +76,12 @@ bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params
     if (cmd == "help") { help(); return false; }
     if (cmd[0] == '#') {
         // echo input, with substitution
-        cout << "Last result is:  " << params[0] << endl;
+        cout << "Previous result is:  " << params[0] << endl;
         return false;
     }
+    if (cmd == "buffer") { _buffer.buffer(); return false; }
 
-    if (cmd == "coins") { return _coins.coins(); }
+    if (cmd == "coins") { _coins.coins(); return false; }
     if (cmd == "coin") { if (!checkMinParams(params, 1)) { return false; } setCoin(params[1]); return false; }
 
     if (cmd == "newkey") { return _keys.newkey(res); }

@@ -55,4 +55,12 @@ bool Buffer::prepareInput(const string& in, string& in_out) {
     }
 }
 
+void Buffer::buffer() const {
+    cout << "Last value:  " << _last.get() << endl;
+    cout << _prev.size() << " previous values:" << endl;
+    for (int i = 0; i < _prev.size(); ++i) {
+        cout << "  #" << i + 1 << "  " << _prev[i].get() << endl;
+    }
+}
+
 } // namespace TW::WalletConsole

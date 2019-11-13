@@ -27,7 +27,7 @@ public:
 class Coins {
 public:
     Coins() { init(); }
-    bool coins() const;
+    void coins() const;
     //bool coin(const string& id) const;
     bool findCoin(const string& coin, Coin& coin_out) const;
 protected:

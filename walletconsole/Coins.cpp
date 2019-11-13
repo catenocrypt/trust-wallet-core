@@ -21,12 +21,11 @@ namespace TW::WalletConsole {
 
 using namespace std;
 
-bool Coins::coins() const {
+void Coins::coins() const {
     for (auto c: _coinsById) {
         cout << c.second.symbol << " \t " << c.second.id << " \t '" << c.second.name << "'" << endl;
     }
     cout << _coinsById.size() << " coins listed." << endl;
-    return false;
 }
 
 /*
