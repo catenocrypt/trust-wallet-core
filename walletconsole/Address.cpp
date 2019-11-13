@@ -52,4 +52,16 @@ bool Address::addrpri(const string& coinid, const string& prikey_in, string& res
     return true;
 }
 
+bool Address::addr(const string& coinid, const string& addrStr, string& res) {
+    Coin coin;
+    if (!_coins.findCoin(coinid, coin)) { return false; }
+    TWCoinType ctype = (TWCoinType)coin.c;
+    if (!TW::validateAddress(ctype, addrStr)) {
+        cout << "Address is not a valid " << coin.name << " address! " << addrStr << endl;
+        return false;
+    }
+    cout << "Address is a valid " << coin.name << " address:  " << addrStr << endl;
+    return false;
+}
+
 } // namespace TW::WalletConsole

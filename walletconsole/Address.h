@@ -23,6 +23,7 @@ public:
     Address(const Coins& coins) : _coins(coins) {}
     bool addrpub(const string& coinid, const string& pubkey, string& res);
     bool addrpri(const string& coinid, const string& prikey, string& res);
+    bool addr(const string& coinid, const string& addrStr, string& res);
 };
 
 } // namespace TW::WalletConsole

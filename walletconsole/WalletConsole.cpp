@@ -51,6 +51,7 @@ void CommandExecutor::help() {
     cout << "Addresses:" << endl;
     cout << "  addrpub <pubkey>        Create <coin> address from public key." << endl;
     cout << "  addrpri <prikey>        Create <coin> address from private key." << endl;
+    cout << "  addr <addr>             Check string <coin> address." << endl;
     cout << "Transformations:" << endl;
     cout << "  hex <inp>               Encode given string to hex" << endl;
     cout << "  base64enc <inp>         Encode given hex data to Base64" << endl;
@@ -87,6 +88,7 @@ bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params
 
     if (cmd == "addrpub") { if (!checkMinParams(params, 1)) { return false; } return _address.addrpub(_activeCoin, params[1], res); }
     if (cmd == "addrpri") { if (!checkMinParams(params, 1)) { return false; } return _address.addrpri(_activeCoin, params[1], res); }
+    if (cmd == "addr") { if (!checkMinParams(params, 1)) { return false; } return _address.addr(_activeCoin, params[1], res); }
 
     if (cmd == "hex") { if (!checkMinParams(params, 1)) { return false; } return Transformer::hex(params[1], res); }
     if (cmd == "base64enc") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64enc(params[1], res); }
