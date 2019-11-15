@@ -17,6 +17,7 @@ public:
     static bool hex(const string& p, string& res);
     static bool base64enc(const string& p, string& res);
     static bool base64dec(const string& p, string& res);
+    static bool filew(const string& filename, const string& data, string& res);
 };
 
 } // namespace TW::WalletConsole

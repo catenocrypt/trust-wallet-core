@@ -53,10 +53,13 @@ void CommandExecutor::help() {
     cout << "  addrpub <pubkey>        Create <coin> address from public key." << endl;
     cout << "  addrpri <prikey>        Create <coin> address from private key." << endl;
     cout << "  addr <addr>             Check string <coin> address." << endl;
+    cout << "Coin-specific methods:" << endl;
     cout << "Transformations:" << endl;
     cout << "  hex <inp>               Encode given string to hex" << endl;
     cout << "  base64enc <inp>         Encode given hex data to Base64" << endl;
     cout << "  base64dec <inp>         Encode given Base64 string to hex data" << endl;
+    cout << "File methods:" << endl;
+    cout << "  filew <filename> <data> Write data to a (new) binary file." << endl;
 }
 
 bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params_in, string& res) {
@@ -95,6 +98,8 @@ bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params
     if (cmd == "hex") { if (!checkMinParams(params, 1)) { return false; } return Transformer::hex(params[1], res); }
     if (cmd == "base64enc") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64enc(params[1], res); }
     if (cmd == "base64dec") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64dec(params[1], res); }
+    
+    if (cmd == "filew") { if (!checkMinParams(params, 2)) { return false; } return Transformer::filew(params[1], params[2], res); }
     // fallback
     help();
     return false;

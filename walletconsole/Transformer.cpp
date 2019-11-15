@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <fstream>
 
 namespace TW::WalletConsole {
 
@@ -52,6 +53,23 @@ bool Transformer::base64dec(const string& p, string& res) {
         cout << "Error while Base64 decode" << endl;
         return false;
     }
+}
+
+bool Transformer::filew(const string& filename, const string& data, string& res) {
+    if (filesystem::exists(filename)) {
+        cout << "Warning: File '" << filename << "' already exists, not overwriting to be safe." << endl;
+        return false;
+    }
+    try {
+        ofstream outfile(filename,  std::ios::out | std::ios::binary);
+        Data bindata = parse_hex(data);
+        outfile.write((const char*)bindata.data(), bindata.size());
+        outfile.close();
+        cout << "Written to file '" << filename << "', " << bindata.size() << " bytes." << endl;
+    } catch (exception& ex) {
+        cout << "Error writing to file '" << filename << "': " << ex.what() << endl;
+    }
+    return false;
 }
 
 } // namespace TW::WalletConsole
