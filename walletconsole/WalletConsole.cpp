@@ -7,7 +7,7 @@
 #include "WalletConsole.h"
 #include "Keys.h"
 #include "Coins.h"
-#include "Transformer.h"
+#include "Util.h"
 #include "Address.h"
 
 #include "Base64.h"
@@ -30,7 +30,7 @@ CommandExecutor::CommandExecutor()
     _keys(_coins),
     _address(_coins)
 {
-    setCoin("btc");
+    setCoin("btc", true);
 }
 
 void CommandExecutor::help() {
@@ -60,6 +60,7 @@ void CommandExecutor::help() {
     cout << "  base64dec <inp>         Encode given Base64 string to hex data" << endl;
     cout << "File methods:" << endl;
     cout << "  filew <filename> <data> Write data to a (new) binary file." << endl;
+    cout << "  filer <filename>        Read data from a binary file." << endl;
 }
 
 bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params_in, string& res) {
@@ -85,7 +86,7 @@ bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params
     if (cmd == "buffer") { _buffer.buffer(); return false; }
 
     if (cmd == "coins") { _coins.coins(); return false; }
-    if (cmd == "coin") { if (!checkMinParams(params, 1)) { return false; } setCoin(params[1]); return false; }
+    if (cmd == "coin") { if (!checkMinParams(params, 1)) { return false; } setCoin(params[1], true); return false; }
 
     if (cmd == "newkey") { return _keys.newkey(res); }
     if (cmd == "pubpri") { if (!checkMinParams(params, 1)) { return false; } return _keys.pubpri(_activeCoin, params[1], res); }
@@ -95,11 +96,13 @@ bool CommandExecutor::executeOne(const string& cmd, const vector<string>& params
     if (cmd == "addrpri") { if (!checkMinParams(params, 1)) { return false; } return _address.addrpri(_activeCoin, params[1], res); }
     if (cmd == "addr") { if (!checkMinParams(params, 1)) { return false; } return _address.addr(_activeCoin, params[1], res); }
 
-    if (cmd == "hex") { if (!checkMinParams(params, 1)) { return false; } return Transformer::hex(params[1], res); }
-    if (cmd == "base64enc") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64enc(params[1], res); }
-    if (cmd == "base64dec") { if (!checkMinParams(params, 1)) { return false; } return Transformer::base64dec(params[1], res); }
+    if (cmd == "hex") { if (!checkMinParams(params, 1)) { return false; } return Util::hex(params[1], res); }
+    if (cmd == "base64enc") { if (!checkMinParams(params, 1)) { return false; } return Util::base64enc(params[1], res); }
+    if (cmd == "base64dec") { if (!checkMinParams(params, 1)) { return false; } return Util::base64dec(params[1], res); }
     
-    if (cmd == "filew") { if (!checkMinParams(params, 2)) { return false; } return Transformer::filew(params[1], params[2], res); }
+    if (cmd == "filew") { if (!checkMinParams(params, 2)) { return false; } return Util::filew(params[1], params[2], res); }
+    if (cmd == "filer") { if (!checkMinParams(params, 1)) { return false; } return Util::filer(params[1], res); }
+    
     // fallback
     help();
     return false;
@@ -141,10 +144,14 @@ bool CommandExecutor::checkMinParams(const vector<string>& params, int n) {
     return false;
 }
 
-bool CommandExecutor::setCoin(const string& coin) {
+bool CommandExecutor::setCoin(const string& coin, bool force) {
     Coin c;
     if (!_coins.findCoin(coin, c)) {
         return false;
+    }
+    if (_activeCoin == c.id && !force) {
+        // already on that coin
+        return true;
     }
     _activeCoin = c.id;
     cout << "Set active coin to: " << c.id << "    Use 'coin' to change.  (name: '" << c.name << "'  symbol: " << c.symbol << "  numericalid: " << c.c << ")" << endl;

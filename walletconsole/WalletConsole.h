@@ -36,7 +36,7 @@ public:
     bool executeOne(const string& cmd, const vector<string>& params, string& res);
     void execute(const string& cmd, const vector<string>& params);
     bool prepareInputs(const vector<string>& p_in, vector<string>& p_out);
-    bool setCoin(const string& coin);
+    bool setCoin(const string& coin, bool force);
     static void help();
     static bool checkMinParams(const vector<string>& params, int n);
 };

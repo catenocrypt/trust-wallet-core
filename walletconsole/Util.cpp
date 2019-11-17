@@ -4,7 +4,7 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
-#include "Transformer.h"
+#include "Util.h"
 
 #include "Base64.h"
 #include "HexCoding.h"
@@ -20,13 +20,13 @@ namespace TW::WalletConsole {
 using namespace std;
 using namespace TW;
 
-bool Transformer::hex(const string& p, string& res) {
+bool Util::hex(const string& p, string& res) {
     res = TW::hex(data(p));
     //cout << "Hex result:  '" << res << "'" << endl;
     return true;
 }
 
-bool Transformer::base64enc(const string& p, string& res) {
+bool Util::base64enc(const string& p, string& res) {
     try {
         Data data = parse_hex(p);
         try {
@@ -43,7 +43,7 @@ bool Transformer::base64enc(const string& p, string& res) {
     }
 }
 
-bool Transformer::base64dec(const string& p, string& res) {
+bool Util::base64dec(const string& p, string& res) {
     try {
         auto dec = Base64::decode(p);
         res = TW::hex(dec);
@@ -55,7 +55,7 @@ bool Transformer::base64dec(const string& p, string& res) {
     }
 }
 
-bool Transformer::filew(const string& filename, const string& data, string& res) {
+bool Util::filew(const string& filename, const string& data, string& res) {
     if (filesystem::exists(filename)) {
         cout << "Warning: File '" << filename << "' already exists, not overwriting to be safe." << endl;
         return false;
@@ -70,6 +70,35 @@ bool Transformer::filew(const string& filename, const string& data, string& res)
         cout << "Error writing to file '" << filename << "': " << ex.what() << endl;
     }
     return false;
+}
+
+bool Util::filer(const string& filename, string& res) {
+    if (!filesystem::exists(filename)) {
+        cout << "Error: File not found '" << filename << "'" << endl;
+        return false;
+    }
+    try {
+        ifstream infile(filename,  std::ios::in | std::ios::binary);
+        // get length of file:
+        infile.seekg (0, infile.end);
+        int length = infile.tellg();
+        infile.seekg (0, infile.beg);
+        char * buffer = new char [length];
+        infile.read(buffer, length);
+        if (!infile) {
+            cout << "Could not read file '" << filename << "'" << endl;
+            return false;
+        }
+        int red = infile.gcount();
+        infile.close();
+        res = string(TW::hex(data((const byte*)buffer, red)));
+        delete[] buffer;
+        cout << "Read " << red << " bytes from file '" << filename << "'." << endl;
+        return true;
+    } catch (exception& ex) {
+        cout << "Error reading from file '" << filename << "': " << ex.what() << endl;
+        return false;
+    }
 }
 
 } // namespace TW::WalletConsole
